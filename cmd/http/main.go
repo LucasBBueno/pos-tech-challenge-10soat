@@ -27,8 +27,16 @@ func main() {
 		slog.Error("Error initializing database connection", "error", err)
 		os.Exit(1)
 	}
-	defer db.Close()
+
 	slog.Info("Successfully connected to the database", "db", config.DB.Connection)
+
+	err = db.Migrate()
+	if err != nil {
+		slog.Error("Error migrating database", "error", err)
+		os.Exit(1)
+	}
+
+	defer db.Close()
 
 	healthHandler := handler.NewHealthHandler()
 	router, err := handler.NewRouter(

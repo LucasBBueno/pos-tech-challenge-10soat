@@ -2,12 +2,21 @@ package postgres
 
 import (
 	"context"
+	"embed"
 	"fmt"
-	"post-tech-challenge-10soat/internal/adapter/config"
 
 	"github.com/Masterminds/squirrel"
+	"github.com/golang-migrate/migrate/v4"
+
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	"github.com/golang-migrate/migrate/v4/source/iofs"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"post-tech-challenge-10soat/internal/adapter/config"
 )
+
+//go:embed migrations/*.sql
+var migrationsFS embed.FS
 
 type DB struct {
 	*pgxpool.Pool
@@ -38,4 +47,20 @@ func New(ctx context.Context, config *config.DB) (*DB, error) {
 		&psql,
 		url,
 	}, nil
+}
+
+func (db *DB) Migrate() error {
+	driver, err := iofs.New(migrationsFS, "migrations")
+	if err != nil {
+		return err
+	}
+	migrations, err := migrate.NewWithSourceInstance("iofs", driver, db.url)
+	if err != nil {
+		return err
+	}
+	err = migrations.Up()
+	if err != nil && err != migrate.ErrNoChange {
+		return err
+	}
+	return nil
 }
