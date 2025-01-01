@@ -1,0 +1,115 @@
+basePath: /v1
+definitions:
+  handler.clientResponse:
+    properties:
+      email:
+        example: john-doe@email.com
+        type: string
+      id:
+        example: "1"
+        type: string
+      name:
+        example: John Doe
+        type: string
+    type: object
+  handler.createClientRequest:
+    properties:
+      email:
+        example: john-doe@email.com
+        type: string
+      name:
+        example: John Doe
+        type: string
+    required:
+    - email
+    - name
+    type: object
+  handler.errorResponse:
+    properties:
+      messages:
+        example:
+        - Error message 1
+        - ' Error message 2'
+        items:
+          type: string
+        type: array
+      success:
+        example: false
+        type: boolean
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:8080
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: API em Go para o desafio na pos-tech fiap de Software Architecture.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: POS-Tech API
+  version: "1.0"
+paths:
+  /clients:
+    post:
+      consumes:
+      - application/json
+      description: registra um novo cliente com nome e e-mail
+      parameters:
+      - description: Registrar novo cliente request
+        in: body
+        name: createClientRequest
+        required: true
+        schema:
+          $ref: '#/definitions/handler.createClientRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cliente registrado
+          schema:
+            $ref: '#/definitions/handler.clientResponse'
+        "400":
+          description: Erro de validação
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Registra um novo cliente
+      tags:
+      - Clients
+  /clients/{cpf}:
+    get:
+      consumes:
+      - application/json
+      description: buscar um cliente pelo Cpf
+      parameters:
+      - description: CPF
+        in: path
+        name: cpf
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Cliente
+          schema:
+            $ref: '#/definitions/handler.clientResponse'
+        "400":
+          description: Erro de validação
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Cliente nao encontrado
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Busca um cliente
+      tags:
+      - Clients
+securityDefinitions:
+  BasicAuth:
+    type: basic
+swagger: "2.0"
