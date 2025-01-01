@@ -9,6 +9,8 @@ import (
 	"post-tech-challenge-10soat/internal/adapter/config"
 	"post-tech-challenge-10soat/internal/adapter/logger"
 	"post-tech-challenge-10soat/internal/adapter/storage/postgres"
+	"post-tech-challenge-10soat/internal/adapter/storage/postgres/repository"
+	"post-tech-challenge-10soat/internal/core/service"
 	"post-tech-challenge-10soat/internal/handler"
 )
 
@@ -37,6 +39,9 @@ func main() {
 	}
 
 	defer db.Close()
+
+	clientRepository := repository.NewClientRepository(db)
+	clientService := service.NewClientService(clientRepository)
 
 	healthHandler := handler.NewHealthHandler()
 	router, err := handler.NewRouter(
