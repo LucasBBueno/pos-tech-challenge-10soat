@@ -40,13 +40,16 @@ func main() {
 
 	defer db.Close()
 
+	healthHandler := handler.NewHealthHandler()
+
 	clientRepository := repository.NewClientRepository(db)
 	clientService := service.NewClientService(clientRepository)
+	clientHandler := handler.NewClientHandler(clientService)
 
-	healthHandler := handler.NewHealthHandler()
 	router, err := handler.NewRouter(
 		config.HTTP,
 		*healthHandler,
+		*clientHandler,
 	)
 	if err != nil {
 		slog.Error("Error initializing router", "error", err)
