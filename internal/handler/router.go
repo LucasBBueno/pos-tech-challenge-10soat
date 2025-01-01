@@ -18,6 +18,7 @@ type Router struct {
 func NewRouter(
 	config *config.HTTP,
 	healthHandler HealthHandler,
+	clientHandler ClientHandler,
 ) (*Router, error) {
 	if config.Env == "production" {
 		gin.SetMode(gin.ReleaseMode)
@@ -35,6 +36,11 @@ func NewRouter(
 		health := v1.Group("/health")
 		{
 			health.GET("/", healthHandler.HealthCheck)
+		}
+		client := v1.Group("/clients")
+		{
+			client.POST("/", clientHandler.CreateClient)
+			client.GET("/:cpf", clientHandler.GetClientByCpf)
 		}
 	}
 	return &Router{
