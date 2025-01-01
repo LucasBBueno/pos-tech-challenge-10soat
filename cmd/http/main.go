@@ -12,8 +12,29 @@ import (
 	"post-tech-challenge-10soat/internal/adapter/storage/postgres/repository"
 	"post-tech-challenge-10soat/internal/core/service"
 	"post-tech-challenge-10soat/internal/handler"
+
+	_ "post-tech-challenge-10soat/docs"
 )
 
+//	@title			POS-Tech API
+//	@version		1.0
+//	@description	API em Go para o desafio na pos-tech fiap de Software Architecture.
+//	@termsOfService	http://swagger.io/terms/
+
+//	@contact.name	API Support
+//	@contact.url	http://www.swagger.io/support
+//	@contact.email	support@swagger.io
+
+//	@license.name	Apache 2.0
+//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+
+//	@host		localhost:8080
+//	@BasePath	/v1
+
+//	@securityDefinitions.basic	BasicAuth
+
+// @externalDocs.description	OpenAPI
+// @externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
 	config, err := config.New()
 	if err != nil {

@@ -79,14 +79,14 @@ func newErrorResponse(errMsgs []string) errorResponse {
 	}
 }
 
-type categoryResponse struct {
+type clientResponse struct {
 	ID    uuid.UUID `json:"id" example:"1"`
 	Name  string    `json:"name" example:"John Doe"`
 	Email string    `json:"email" example:"john-doe@email.com"`
 }
 
-func newClientReponse(client *domain.Client) categoryResponse {
-	return categoryResponse{
+func newClientReponse(client *domain.Client) clientResponse {
+	return clientResponse{
 		ID:    client.Id,
 		Name:  client.Name,
 		Email: client.Email,

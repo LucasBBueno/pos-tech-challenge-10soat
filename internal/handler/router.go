@@ -8,6 +8,9 @@ import (
 	"github.com/gin-gonic/gin"
 	sloggin "github.com/samber/slog-gin"
 
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
 	"post-tech-challenge-10soat/internal/adapter/config"
 )
 
@@ -31,6 +34,12 @@ func NewRouter(
 	router := gin.New()
 	router.Use(sloggin.New(slog.Default()), gin.Recovery(), cors.New(ginConfig))
 
+	router.GET("/swagger.json", func(c *gin.Context) {
+		c.File("../../docs/swagger.json")
+	})
+
+	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.URL("/swagger.json")))
+
 	v1 := router.Group("/v1")
 	{
 		health := v1.Group("/health")
@@ -43,6 +52,7 @@ func NewRouter(
 			client.GET("/:cpf", clientHandler.GetClientByCpf)
 		}
 	}
+
 	return &Router{
 		router,
 	}, nil
