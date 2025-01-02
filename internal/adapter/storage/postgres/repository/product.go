@@ -47,6 +47,9 @@ func (repository *ProductRepository) ListProducts(ctx context.Context, categoryI
 		err := rows.Scan(
 			&product.Id,
 			&product.Name,
+			&product.Description,
+			&product.Image,
+			&product.Value,
 			&product.CategoryId,
 			&product.CreatedAt,
 			&product.UpdatedAt,
