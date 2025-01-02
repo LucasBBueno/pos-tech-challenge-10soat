@@ -1,4 +1,4 @@
-INSERT INTO "items" ("name", "category_id") VALUES
+INSERT INTO "products" ("name", "category_id") VALUES
   ('Lanche 1', (SELECT id FROM "categories" WHERE name = 'Lanche')),
   ('Lanche 2', (SELECT id FROM "categories" WHERE name = 'Lanche')),
   ('Lanche 3', (SELECT id FROM "categories" WHERE name = 'Lanche')),
