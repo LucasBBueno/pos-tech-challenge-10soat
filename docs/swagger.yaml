@@ -53,8 +53,14 @@ definitions:
       created_at:
         example: "1970-01-01T00:00:00Z"
         type: string
+      description:
+        example: Lanche com bacon
+        type: string
       id:
         example: ed6ac028-8016-4cbd-aeee-c3a155cdb2a4
+        type: string
+      image:
+        example: https://
         type: string
       name:
         example: Lanche 1
@@ -62,6 +68,9 @@ definitions:
       updated_at:
         example: "1970-01-01T00:00:00Z"
         type: string
+      value:
+        example: 10.9
+        type: number
     type: object
 externalDocs:
   description: OpenAPI
