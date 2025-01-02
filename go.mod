@@ -68,6 +68,7 @@ require (
 	github.com/Masterminds/squirrel v1.5.4
 	github.com/gin-contrib/cors v1.7.2
 	github.com/golang-migrate/migrate/v4 v4.18.1
+	github.com/jackc/pgx v3.6.2+incompatible
 	github.com/jackc/pgx/v5 v5.7.1
 	github.com/samber/lo v1.47.0 // indirect
 	github.com/samber/slog-gin v1.13.6

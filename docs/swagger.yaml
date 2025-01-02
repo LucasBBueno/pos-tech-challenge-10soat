@@ -1,12 +1,21 @@
 basePath: /v1
 definitions:
+  handler.categoryResponse:
+    properties:
+      id:
+        example: ed6ac028-8016-4cbd-aeee-c3a155cdb2a4
+        type: string
+      name:
+        example: Lanche
+        type: string
+    type: object
   handler.clientResponse:
     properties:
       email:
         example: john-doe@email.com
         type: string
       id:
-        example: "1"
+        example: ed6ac028-8016-4cbd-aeee-c3a155cdb2a4
         type: string
       name:
         example: John Doe
@@ -36,6 +45,23 @@ definitions:
       success:
         example: false
         type: boolean
+    type: object
+  handler.productResponse:
+    properties:
+      category:
+        $ref: '#/definitions/handler.categoryResponse'
+      created_at:
+        example: "1970-01-01T00:00:00Z"
+        type: string
+      id:
+        example: ed6ac028-8016-4cbd-aeee-c3a155cdb2a4
+        type: string
+      name:
+        example: Lanche 1
+        type: string
+      updated_at:
+        example: "1970-01-01T00:00:00Z"
+        type: string
     type: object
 externalDocs:
   description: OpenAPI
@@ -109,6 +135,36 @@ paths:
       summary: Busca um cliente
       tags:
       - Clients
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: Lista os produtos podendo buscar por categoria
+      parameters:
+      - description: Id da categoria
+        in: query
+        name: category_id
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Produtos listados
+          schema:
+            items:
+              $ref: '#/definitions/handler.productResponse'
+            type: array
+        "400":
+          description: Erro de validação
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Erro interno
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Lista os produtos
+      tags:
+      - Products
 securityDefinitions:
   BasicAuth:
     type: basic

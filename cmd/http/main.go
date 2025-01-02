@@ -67,10 +67,16 @@ func main() {
 	clientService := service.NewClientService(clientRepository)
 	clientHandler := handler.NewClientHandler(clientService)
 
+	productRepository := repository.NewProductRepository(db)
+	categoryRepository := repository.NewCategoryRepository(db)
+	productService := service.NewProductService(productRepository, categoryRepository)
+	productHandler := handler.NewProductHandler(productService)
+
 	router, err := handler.NewRouter(
 		config.HTTP,
 		*healthHandler,
 		*clientHandler,
+		*productHandler,
 	)
 	if err != nil {
 		slog.Error("Error initializing router", "error", err)

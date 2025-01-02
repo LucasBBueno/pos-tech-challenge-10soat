@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/http"
 	"post-tech-challenge-10soat/internal/core/domain"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -80,7 +81,7 @@ func newErrorResponse(errMsgs []string) errorResponse {
 }
 
 type clientResponse struct {
-	ID    uuid.UUID `json:"id" example:"1"`
+	ID    uuid.UUID `json:"id" example:"ed6ac028-8016-4cbd-aeee-c3a155cdb2a4"`
 	Name  string    `json:"name" example:"John Doe"`
 	Email string    `json:"email" example:"john-doe@email.com"`
 }
@@ -90,5 +91,35 @@ func newClientReponse(client *domain.Client) clientResponse {
 		ID:    client.Id,
 		Name:  client.Name,
 		Email: client.Email,
+	}
+}
+
+type categoryResponse struct {
+	ID   uuid.UUID `json:"id" example:"ed6ac028-8016-4cbd-aeee-c3a155cdb2a4"`
+	Name string    `json:"name" example:"Lanche"`
+}
+
+func newCategoryResponse(category *domain.Category) categoryResponse {
+	return categoryResponse{
+		ID:   category.Id,
+		Name: category.Name,
+	}
+}
+
+type productResponse struct {
+	ID        uuid.UUID        `json:"id" example:"ed6ac028-8016-4cbd-aeee-c3a155cdb2a4"`
+	Name      string           `json:"name" example:"Lanche 1"`
+	Category  categoryResponse `json:"category"`
+	CreatedAt time.Time        `json:"created_at" example:"1970-01-01T00:00:00Z"`
+	UpdatedAt time.Time        `json:"updated_at" example:"1970-01-01T00:00:00Z"`
+}
+
+func newProductResponse(product *domain.Product) productResponse {
+	return productResponse{
+		ID:        product.Id,
+		Name:      product.Name,
+		Category:  newCategoryResponse(product.Category),
+		CreatedAt: product.CreatedAt,
+		UpdatedAt: product.UpdatedAt,
 	}
 }
