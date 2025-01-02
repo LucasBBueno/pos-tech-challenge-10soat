@@ -22,6 +22,7 @@ func NewRouter(
 	config *config.HTTP,
 	healthHandler HealthHandler,
 	clientHandler ClientHandler,
+	productHandler ProductHandler,
 ) (*Router, error) {
 	if config.Env == "production" {
 		gin.SetMode(gin.ReleaseMode)
@@ -50,6 +51,10 @@ func NewRouter(
 		{
 			client.POST("/", clientHandler.CreateClient)
 			client.GET("/:cpf", clientHandler.GetClientByCpf)
+		}
+		product := v1.Group("/products")
+		{
+			product.GET("/", productHandler.ListProducts)
 		}
 	}
 
