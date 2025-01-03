@@ -1,5 +1,17 @@
 basePath: /v1
 definitions:
+  domain.OrderStatus:
+    enum:
+    - received
+    - preparing
+    - ready
+    - completed
+    type: string
+    x-enum-varnames:
+    - OrderStatusReceived
+    - OrderStatusPreparing
+    - OrderStatusReady
+    - OrderStatusCompleted
   handler.categoryResponse:
     properties:
       id:
@@ -32,6 +44,18 @@ definitions:
     required:
     - email
     - name
+    type: object
+  handler.createOrderRequest:
+    properties:
+      client_id:
+        example: ed6ac028-8016-4cbd-aeee-c3a155cdb2a4
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/handler.orderProductRequest'
+        type: array
+    required:
+    - products
     type: object
   handler.createProductRequest:
     properties:
@@ -67,6 +91,47 @@ definitions:
       success:
         example: false
         type: boolean
+    type: object
+  handler.orderProductRequest:
+    properties:
+      observation:
+        example: Lanche com batata
+        type: string
+      product_id:
+        example: ed6ac028-8016-4cbd-aeee-c3a155cdb2a4
+        minLength: 1
+        type: string
+      quantity:
+        example: 1
+        type: integer
+    required:
+    - product_id
+    - quantity
+    type: object
+  handler.orderResponse:
+    properties:
+      client_id:
+        example: ed6ac028-8016-4cbd-aeee-c3a155cdb2a4
+        type: string
+      created_at:
+        example: "1970-01-01T00:00:00Z"
+        type: string
+      id:
+        example: ed6ac028-8016-4cbd-aeee-c3a155cdb2a4
+        type: string
+      number:
+        example: 123
+        type: integer
+      status:
+        allOf:
+        - $ref: '#/definitions/domain.OrderStatus'
+        example: received
+      total:
+        example: 100.9
+        type: number
+      updated_at:
+        example: "1970-01-01T00:00:00Z"
+        type: string
     type: object
   handler.productResponse:
     properties:
@@ -188,6 +253,38 @@ paths:
       summary: Busca um cliente
       tags:
       - Clients
+  /orders:
+    post:
+      consumes:
+      - application/json
+      description: Cria um novo pedido processando o pagamento
+      parameters:
+      - description: Criar ordem body
+        in: body
+        name: createOrderRequest
+        required: true
+        schema:
+          $ref: '#/definitions/handler.createOrderRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Ordem criada
+          schema:
+            $ref: '#/definitions/handler.orderResponse'
+        "400":
+          description: Erro de validação
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Erro interno
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      security:
+      - BearerAuth: []
+      summary: Criar um novo pedido
+      tags:
+      - Orders
   /products:
     get:
       consumes:
