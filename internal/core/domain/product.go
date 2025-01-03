@@ -11,7 +11,7 @@ type Product struct {
 	Name        string
 	Description string
 	Image       string
-	Value       float32
+	Value       float64
 	CategoryId  uuid.UUID
 	Category    *Category
 	CreatedAt   time.Time
