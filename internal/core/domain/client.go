@@ -8,7 +8,7 @@ import (
 
 type Client struct {
 	Id        uuid.UUID
-	Cpf       string
+	Cpf       *string
 	Name      string
 	Email     string
 	CreatedAt time.Time

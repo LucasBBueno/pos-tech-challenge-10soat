@@ -72,11 +72,24 @@ func main() {
 	productService := service.NewProductService(productRepository, categoryRepository)
 	productHandler := handler.NewProductHandler(productService)
 
+	orderRepository := repository.NewOrderRepository(db)
+	orderProductRepository := repository.NewOrderProductRepository(db)
+	paymentRepository := repository.NewPaymentRepository(db)
+	paymentService := service.NewPaymentService(paymentRepository)
+	orderService := service.NewOrderService(
+		productRepository,
+		clientRepository,
+		orderRepository,
+		orderProductRepository,
+		paymentService)
+	orderHandler := handler.NewOrderHandler(orderService)
+
 	router, err := handler.NewRouter(
 		config.HTTP,
 		*healthHandler,
 		*clientHandler,
 		*productHandler,
+		*orderHandler,
 	)
 	if err != nil {
 		slog.Error("Error initializing router", "error", err)

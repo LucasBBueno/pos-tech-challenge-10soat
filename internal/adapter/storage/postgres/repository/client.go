@@ -64,3 +64,27 @@ func (repository *ClientRepository) GetClientByCpf(ctx context.Context, cpf stri
 	}
 	return &client, nil
 }
+
+func (repository *ClientRepository) GetClientById(ctx context.Context, id string) (*domain.Client, error) {
+	var client domain.Client
+	query := repository.db.QueryBuilder.Select("*").
+		From("clients").
+		Where(sq.Eq{"id": id}).
+		Limit(1)
+	sql, args, err := query.ToSql()
+	if err != nil {
+		return nil, err
+	}
+	err = repository.db.QueryRow(ctx, sql, args...).Scan(
+		&client.Id,
+		&client.Cpf,
+		&client.Name,
+		&client.Email,
+		&client.CreatedAt,
+		&client.UpdatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return &client, nil
+}

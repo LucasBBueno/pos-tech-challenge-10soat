@@ -23,6 +23,7 @@ func NewRouter(
 	healthHandler HealthHandler,
 	clientHandler ClientHandler,
 	productHandler ProductHandler,
+	orderHandler OrderHandler,
 ) (*Router, error) {
 	if config.Env == "production" {
 		gin.SetMode(gin.ReleaseMode)
@@ -58,6 +59,10 @@ func NewRouter(
 			product.POST("/", productHandler.CreateProduct)
 			product.PUT("/:id", productHandler.UpdateProduct)
 			product.DELETE("/:id", productHandler.DeleteProduct)
+		}
+		order := v1.Group("/orders")
+		{
+			order.POST("/", orderHandler.CreateOrder)
 		}
 	}
 

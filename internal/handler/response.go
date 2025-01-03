@@ -129,3 +129,28 @@ func newProductResponse(product *domain.Product) productResponse {
 		UpdatedAt:   product.UpdatedAt,
 	}
 }
+
+type orderResponse struct {
+	Id        uuid.UUID          `json:"id" example:"ed6ac028-8016-4cbd-aeee-c3a155cdb2a4"`
+	Number    int                `json:"number" example:"123"`
+	ClientId  uuid.UUID          `json:"client_id" example:"ed6ac028-8016-4cbd-aeee-c3a155cdb2a4"`
+	Total     float64            `json:"total" example:"100.90"`
+	Status    domain.OrderStatus `json:"status" example:"received"`
+	CreatedAt time.Time          `json:"created_at" example:"1970-01-01T00:00:00Z"`
+	UpdatedAt time.Time          `json:"updated_at" example:"1970-01-01T00:00:00Z"`
+}
+
+func newOrderResponse(order *domain.Order) orderResponse {
+	orderResponse := orderResponse{
+		Id:        order.Id,
+		Number:    order.Number,
+		Total:     order.Total,
+		Status:    order.Status,
+		CreatedAt: order.CreatedAt,
+		UpdatedAt: order.UpdatedAt,
+	}
+	if order.ClientId != nil {
+		orderResponse.ClientId = *order.ClientId
+	}
+	return orderResponse
+}
