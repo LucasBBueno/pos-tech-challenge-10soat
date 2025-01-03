@@ -55,6 +55,9 @@ func NewRouter(
 		product := v1.Group("/products")
 		{
 			product.GET("/", productHandler.ListProducts)
+			product.POST("/", productHandler.CreateProduct)
+			product.PUT("/:id", productHandler.UpdateProduct)
+			product.DELETE("/:id", productHandler.DeleteProduct)
 		}
 	}
 

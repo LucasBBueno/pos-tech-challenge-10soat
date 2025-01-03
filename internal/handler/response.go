@@ -111,7 +111,7 @@ type productResponse struct {
 	Name        string           `json:"name" example:"Lanche 1"`
 	Description string           `json:"description" example:"Lanche com bacon"`
 	Image       string           `json:"image" example:"https://"`
-	Value       float32          `json:"value" example:"10.90"`
+	Value       float64          `json:"value" example:"10.90"`
 	Category    categoryResponse `json:"category"`
 	CreatedAt   time.Time        `json:"created_at" example:"1970-01-01T00:00:00Z"`
 	UpdatedAt   time.Time        `json:"updated_at" example:"1970-01-01T00:00:00Z"`

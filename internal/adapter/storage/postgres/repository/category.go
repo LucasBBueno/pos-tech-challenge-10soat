@@ -4,7 +4,6 @@ import (
 	"context"
 
 	sq "github.com/Masterminds/squirrel"
-	"github.com/google/uuid"
 	"github.com/jackc/pgx"
 
 	"post-tech-challenge-10soat/internal/adapter/storage/postgres"
@@ -21,12 +20,14 @@ func NewCategoryRepository(db *postgres.DB) *CategoryRepository {
 	}
 }
 
-func (cr *CategoryRepository) GetCategoryById(ctx context.Context, id uuid.UUID) (*domain.Category, error) {
+func (cr *CategoryRepository) GetCategoryById(ctx context.Context, id string) (*domain.Category, error) {
 	var category domain.Category
 	query := cr.db.QueryBuilder.Select("*").
 		From("categories").
-		Where(sq.Eq{"id": id})
+		Where(sq.Eq{"id": id}).
+		Limit(1)
 	sql, args, err := query.ToSql()
+
 	if err != nil {
 		return nil, err
 	}

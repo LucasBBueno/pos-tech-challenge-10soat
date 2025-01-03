@@ -33,6 +33,28 @@ definitions:
     - email
     - name
     type: object
+  handler.createProductRequest:
+    properties:
+      category_id:
+        example: ed6ac028-8016-4cbd-aeee-c3a155cdb2a4
+        minLength: 1
+        type: string
+      description:
+        example: Lanche com batata
+        type: string
+      image:
+        example: https://
+        type: string
+      name:
+        example: Lanche
+        type: string
+      value:
+        example: 10.9
+        type: number
+    required:
+    - name
+    - value
+    type: object
   handler.errorResponse:
     properties:
       messages:
@@ -72,6 +94,28 @@ definitions:
         example: 10.9
         type: number
     type: object
+  handler.updateProductRequest:
+    properties:
+      category_id:
+        example: ed6ac028-8016-4cbd-aeee-c3a155cdb2a4
+        minLength: 1
+        type: string
+      description:
+        example: Lanche com batata
+        type: string
+      image:
+        example: https://
+        type: string
+      name:
+        example: Lanche
+        type: string
+      value:
+        example: 10.9
+        type: number
+    required:
+    - name
+    - value
+    type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -93,7 +137,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: registra um novo cliente com nome e e-mail
+      description: Registra um novo cliente com nome e e-mail
       parameters:
       - description: Registrar novo cliente request
         in: body
@@ -172,6 +216,94 @@ paths:
           schema:
             $ref: '#/definitions/handler.errorResponse'
       summary: Lista os produtos
+      tags:
+      - Products
+    post:
+      consumes:
+      - application/json
+      description: registra um novo produto
+      parameters:
+      - description: Registrar novo produto body
+        in: body
+        name: createProductRequest
+        required: true
+        schema:
+          $ref: '#/definitions/handler.createProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Produto registrado
+          schema:
+            $ref: '#/definitions/handler.productResponse'
+        "400":
+          description: Erro de validação
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Registra um novo produto
+      tags:
+      - Products
+  /products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove um produto por meio de seu identificador
+      parameters:
+      - description: Id do produto
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Produto removido
+          schema:
+            $ref: '#/definitions/handler.productResponse'
+        "400":
+          description: Erro de validação
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Produto nao encontrado
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Remove um produto
+      tags:
+      - Products
+    put:
+      consumes:
+      - application/json
+      description: Atualiza um produto
+      parameters:
+      - description: Id do produto
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Atualizar produto body
+        in: body
+        name: updateProductRequest
+        required: true
+        schema:
+          $ref: '#/definitions/handler.updateProductRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Produto atualizado
+          schema:
+            $ref: '#/definitions/handler.productResponse'
+        "400":
+          description: Erro de validação
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "404":
+          description: Produto nao encontrado
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Atualiza um produto
       tags:
       - Products
 securityDefinitions:
