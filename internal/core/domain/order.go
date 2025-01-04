@@ -39,3 +39,10 @@ type CreateOrder struct {
 	Total    float64
 	Products []CreateOrderProduct
 }
+
+type ListOrders struct {
+	ReceivedOrders  []Order
+	PreparingOrders []Order
+	ReadyOrders     []Order
+	CompletedOrders []Order
+}

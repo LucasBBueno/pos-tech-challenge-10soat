@@ -102,3 +102,11 @@ func (service *OrderService) CreateOrder(ctx context.Context, createOrder *domai
 	}
 	return order, nil
 }
+
+func (service *OrderService) ListOrders(ctx context.Context, limit uint64) (*domain.ListOrders, error) {
+	orders, err := service.orderRepository.ListOrders(ctx, limit)
+	if err != nil {
+		return nil, err
+	}
+	return orders, nil
+}

@@ -67,3 +67,34 @@ func (handler *OrderHandler) CreateOrder(ctx *gin.Context) {
 	response := newOrderResponse(order)
 	handleSuccess(ctx, response)
 }
+
+type listOrdersRequest struct {
+	Limit uint64 `form:"limit" binding:"required,min=1" example:5""`
+}
+
+// ListOrders godoc
+//
+//	@Summary		Lista os pedidos
+//	@Description	Lista os pedidos separados por status com limite de consulta
+//	@Tags			Orders
+//	@Accept			json
+//	@Produce		json
+//	@Param			limit	query		int			false	"Limite de pedidos"
+//	@Success		200			{object}	listOrdersResponse			"Pedidos listados"
+//	@Failure		400			{object}	errorResponse	"Erro de validação"
+//	@Failure		500			{object}	errorResponse	"Erro interno"
+//	@Router			/orders [get]
+func (handler *OrderHandler) ListOrders(ctx *gin.Context) {
+	var request listOrdersRequest
+	if err := ctx.ShouldBindQuery(&request); err != nil {
+		validationError(ctx, err)
+		return
+	}
+	listOrders, err := handler.service.ListOrders(ctx, request.Limit)
+	if err != nil {
+		handleError(ctx, err)
+		return
+	}
+	response := newListOrdersResponse(listOrders)
+	handleSuccess(ctx, response)
+}

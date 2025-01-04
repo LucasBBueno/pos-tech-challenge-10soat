@@ -92,6 +92,25 @@ definitions:
         example: false
         type: boolean
     type: object
+  handler.listOrdersResponse:
+    properties:
+      completed_orders:
+        items:
+          $ref: '#/definitions/handler.orderResponse'
+        type: array
+      preparing_orders:
+        items:
+          $ref: '#/definitions/handler.orderResponse'
+        type: array
+      ready_orders:
+        items:
+          $ref: '#/definitions/handler.orderResponse'
+        type: array
+      received_orders:
+        items:
+          $ref: '#/definitions/handler.orderResponse'
+        type: array
+    type: object
   handler.orderProductRequest:
     properties:
       observation:
@@ -254,6 +273,33 @@ paths:
       tags:
       - Clients
   /orders:
+    get:
+      consumes:
+      - application/json
+      description: Lista os pedidos separados por status com limite de consulta
+      parameters:
+      - description: Limite de pedidos
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Pedidos listados
+          schema:
+            $ref: '#/definitions/handler.listOrdersResponse'
+        "400":
+          description: Erro de validação
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+        "500":
+          description: Erro interno
+          schema:
+            $ref: '#/definitions/handler.errorResponse'
+      summary: Lista os pedidos
+      tags:
+      - Orders
     post:
       consumes:
       - application/json
