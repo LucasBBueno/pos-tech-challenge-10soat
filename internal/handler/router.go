@@ -63,6 +63,7 @@ func NewRouter(
 		order := v1.Group("/orders")
 		{
 			order.POST("/", orderHandler.CreateOrder)
+			order.GET("/", orderHandler.ListOrders)
 		}
 	}
 

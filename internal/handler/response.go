@@ -154,3 +154,35 @@ func newOrderResponse(order *domain.Order) orderResponse {
 	}
 	return orderResponse
 }
+
+type listOrdersResponse struct {
+	ReceivedOrders  []orderResponse `json:"received_orders"`
+	PreparingOrders []orderResponse `json:"preparing_orders"`
+	ReadyOrders     []orderResponse `json:"ready_orders"`
+	CompletedOrders []orderResponse `json:"completed_orders"`
+}
+
+func newListOrdersResponse(listOrders *domain.ListOrders) listOrdersResponse {
+	var receivedOrdersResponse []orderResponse
+	var preparingOrdersResponse []orderResponse
+	var readyOrdersResponse []orderResponse
+	var completedOrdersResponse []orderResponse
+	for _, order := range listOrders.ReceivedOrders {
+		receivedOrdersResponse = append(receivedOrdersResponse, newOrderResponse(&order))
+	}
+	for _, order := range listOrders.PreparingOrders {
+		preparingOrdersResponse = append(preparingOrdersResponse, newOrderResponse(&order))
+	}
+	for _, order := range listOrders.ReadyOrders {
+		readyOrdersResponse = append(readyOrdersResponse, newOrderResponse(&order))
+	}
+	for _, order := range listOrders.CompletedOrders {
+		completedOrdersResponse = append(completedOrdersResponse, newOrderResponse(&order))
+	}
+	return listOrdersResponse{
+		ReceivedOrders:  receivedOrdersResponse,
+		PreparingOrders: preparingOrdersResponse,
+		ReadyOrders:     readyOrdersResponse,
+		CompletedOrders: completedOrdersResponse,
+	}
+}
