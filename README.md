@@ -37,14 +37,13 @@ A API adota uma arquitetura em camadas, promovendo a separação de responsabili
 2. **Navegue até o diretório do projeto:**
 ```bash
    cd pos-tech-challenge-10soat
-   ```
+   
 
 3. **Crie um arquivo .env na raiz do projeto (veja a seção "Configuração")**
 
 4. **Inicie a aplicação com Docker Compose:**
 ```bash
 docker-compose up -d --build
-```
 
 Este comando irá:
 
@@ -56,7 +55,7 @@ Iniciar os containers em modo detached (-d), executando em segundo plano.
 5. **Verifique os logs da aplicação:**
 ```bash
 docker-compose logs -f postech
-```
+
 
 6. **Acesse a API: A API estará disponível em http://localhost:8080/v1/(endpoints)**
 
@@ -65,7 +64,7 @@ docker-compose logs -f postech
 Parando a aplicação:
 ```bash
 docker-compose down
-```
+
 **Docker**
 
 ***Dockerfile***
@@ -77,6 +76,7 @@ O Dockerfile define como a imagem Docker da aplicação é construída. Ele util
 O docker-compose.yaml define os serviços que compõem a aplicação, incluindo a API (postech) e o banco de dados (postgres). Ele especifica a construção da imagem, as portas que serão mapeadas, as dependências entre os serviços e as variáveis de ambiente. (Veja o arquivo docker-compose.yaml para detalhes).
 
 **Contribuição**
+
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests.
 
 **Melhorias Futuras**
