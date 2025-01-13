@@ -35,15 +35,15 @@ A API adota uma arquitetura em camadas, promovendo a separação de responsabili
 
 
 2. **Navegue até o diretório do projeto:**
-```bash
-   cd pos-tech-challenge-10soat
+   ```bash
+   cd pos-tech-challenge-10soat```
    
 
 3. **Crie um arquivo .env na raiz do projeto (veja a seção "Configuração")**
 
 4. **Inicie a aplicação com Docker Compose:**
-```bash
-docker-compose up -d --build
+   ```bash
+   docker-compose up -d --build
 
 Este comando irá:
 
@@ -53,17 +53,17 @@ Iniciar os containers em modo detached (-d), executando em segundo plano.
 
 
 5. **Verifique os logs da aplicação:**
-```bash
-docker-compose logs -f postech
+   ```bash
+   docker-compose logs -f postech
 
+6. **Parando a aplicação:**
+   ```bash
+   docker-compose down
 
-6. **Acesse a API: A API estará disponível em http://localhost:8080/v1/(endpoints)**
+7. **Acesse a API: A API estará disponível em http://localhost:8080/v1/(endpoints)**
 
-7. **Documentação da API (Swagger): A documentação da API está disponível em http://localhost:8080/docs/index.html**
+8. **Documentação da API (Swagger): A documentação da API está disponível em http://localhost:8080/docs/index.html**
 
-Parando a aplicação:
-```bash
-docker-compose down
 
 **Docker**
 
