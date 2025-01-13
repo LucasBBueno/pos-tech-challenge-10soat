@@ -68,16 +68,19 @@ docker-compose down
 ```
 **Docker**
 
-*Dockerfile*
+***Dockerfile***
+
 O Dockerfile define como a imagem Docker da aplicação é construída. Ele utiliza uma imagem base do Go, copia o código-fonte, instala as dependências, compila a aplicação e configura o ponto de entrada. (Veja o arquivo Dockerfile para detalhes).
 
-*Docker Compose*
+***Docker Compose***
+
 O docker-compose.yaml define os serviços que compõem a aplicação, incluindo a API (postech) e o banco de dados (postgres). Ele especifica a construção da imagem, as portas que serão mapeadas, as dependências entre os serviços e as variáveis de ambiente. (Veja o arquivo docker-compose.yaml para detalhes).
 
-Contribuição
+**Contribuição**
 Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests.
 
-Melhorias Futuras
+**Melhorias Futuras**
+
 Implementar paginação para endpoints que retornam listas.
 Aprimorar o tratamento de erros, fornecendo mensagens mais detalhadas.
 Adicionar mais testes unitários e de integração.
