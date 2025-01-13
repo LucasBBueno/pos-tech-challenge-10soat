@@ -39,9 +39,7 @@ A API adota uma arquitetura em camadas, promovendo a separação de responsabili
    cd pos-tech-challenge-10soat```
    
 
-3. **Crie um arquivo .env na raiz do projeto (veja a seção "Configuração")**
-
-4. **Inicie a aplicação com Docker Compose:**
+3. **Inicie a aplicação com Docker Compose:**
    ```bash
    docker-compose up -d --build
 
@@ -52,17 +50,17 @@ Criar os containers para a aplicação (postech) e o banco de dados (postgres).
 Iniciar os containers em modo detached (-d), executando em segundo plano.
 
 
-5. **Verifique os logs da aplicação:**
+4. **Verifique os logs da aplicação:**
    ```bash
    docker-compose logs -f postech
 
-6. **Parando a aplicação:**
+5. **Parando a aplicação:**
    ```bash
    docker-compose down
 
-7. **Acesse a API: A API estará disponível em http://localhost:8080/v1/(endpoints)**
+6. **Acesse a API: A API estará disponível em http://localhost:8080/v1/(endpoints)**
 
-8. **Documentação da API (Swagger): A documentação da API está disponível em http://localhost:8080/docs/index.html**
+7. **Documentação da API (Swagger): A documentação da API está disponível em http://localhost:8080/docs/index.html**
 
 
 **Docker**
