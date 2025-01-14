@@ -1,0 +1,108 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	"log/slog"
+	"os"
+	"post-tech-challenge-10soat/internal/adapters/repository"
+	"post-tech-challenge-10soat/internal/core/usecases/client"
+	"post-tech-challenge-10soat/internal/core/usecases/order"
+	"post-tech-challenge-10soat/internal/core/usecases/payment"
+	"post-tech-challenge-10soat/internal/core/usecases/product"
+	"post-tech-challenge-10soat/internal/handler"
+	"post-tech-challenge-10soat/internal/infra/config"
+	"post-tech-challenge-10soat/internal/infra/logger"
+	"post-tech-challenge-10soat/internal/infra/storage/postgres"
+
+	_ "post-tech-challenge-10soat/docs"
+)
+
+//	@title			POS-Tech API
+//	@version		1.0
+//	@description	API em Go para o desafio na pos-tech fiap de Software Architecture.
+//	@termsOfService	http://swagger.io/terms/
+
+//	@contact.name	API Support
+//	@contact.url	http://www.swagger.io/support
+//	@contact.email	support@swagger.io
+
+//	@license.name	Apache 2.0
+//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
+
+//	@host		localhost:8080
+//	@BasePath	/v1
+
+//	@securityDefinitions.basic	BasicAuth
+
+// @externalDocs.description	OpenAPI
+// @externalDocs.url			https://swagger.io/resources/open-api/
+func main() {
+	config, err := config.New()
+	if err != nil {
+		slog.Error("Error loading environment variables", "error", err)
+		os.Exit(1)
+	}
+	logger.Set(config.App)
+	slog.Info("Starting the application", "app", config.App.Name, "env", config.App.Env)
+
+	ctx := context.Background()
+	db, err := postgres.New(ctx, config.DB)
+	if err != nil {
+		slog.Error("Error initializing database connection", "error", err)
+		os.Exit(1)
+	}
+
+	slog.Info("Successfully connected to the database", "db", config.DB.Connection)
+
+	err = db.Migrate()
+	if err != nil {
+		slog.Error("Error migrating database", "error", err)
+		os.Exit(1)
+	}
+
+	defer db.Close()
+
+	healthHandler := handler.NewHealthHandler()
+
+	clientRepository := repository.NewClientRepository(db)
+	clientService := client.NewClientService(clientRepository)
+	clientHandler := handler.NewClientHandler(clientService)
+
+	productRepository := repository.NewProductRepository(db)
+	categoryRepository := repository.NewCategoryRepository(db)
+	productService := product.NewProductService(productRepository, categoryRepository)
+	productHandler := handler.NewProductHandler(productService)
+
+	orderRepository := repository.NewOrderRepository(db)
+	orderProductRepository := repository.NewOrderProductRepository(db)
+	paymentRepository := repository.NewPaymentRepository(db)
+	paymentService := payment.NewPaymentService(paymentRepository)
+	orderService := order.NewOrderService(
+		productRepository,
+		clientRepository,
+		orderRepository,
+		orderProductRepository,
+		paymentService)
+	orderHandler := handler.NewOrderHandler(orderService)
+
+	router, err := handler.NewRouter(
+		config.HTTP,
+		*healthHandler,
+		*clientHandler,
+		*productHandler,
+		*orderHandler,
+	)
+	if err != nil {
+		slog.Error("Error initializing router", "error", err)
+		os.Exit(1)
+	}
+
+	listenAddress := fmt.Sprintf("%s:%s", config.HTTP.URL, config.HTTP.Port)
+	slog.Info("Starting the HTTP server", "listen_address", listenAddress)
+	err = router.Run(listenAddress)
+	if err != nil {
+		slog.Error("Error starting the HTTP server", "error", err)
+		os.Exit(1)
+	}
+}

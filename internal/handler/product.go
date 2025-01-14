@@ -2,18 +2,18 @@ package handler
 
 import (
 	"fmt"
-	"post-tech-challenge-10soat/internal/core/domain"
-	"post-tech-challenge-10soat/internal/core/port"
+	"post-tech-challenge-10soat/internal/application/core/domain"
+	"post-tech-challenge-10soat/internal/core/ports"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
 
 type ProductHandler struct {
-	service port.ProductService
+	service ports.ProductService
 }
 
-func NewProductHandler(service port.ProductService) *ProductHandler {
+func NewProductHandler(service ports.ProductService) *ProductHandler {
 	return &ProductHandler{
 		service,
 	}

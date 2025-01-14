@@ -1,19 +1,21 @@
 package handler
 
 import (
-	"post-tech-challenge-10soat/internal/core/domain"
-	"post-tech-challenge-10soat/internal/core/port"
-
 	"github.com/gin-gonic/gin"
+	order2 "post-tech-challenge-10soat/internal/adapters/mappers/order"
+	"post-tech-challenge-10soat/internal/application/core/domain"
+	"post-tech-challenge-10soat/internal/application/core/usecases/order"
 )
 
 type OrderHandler struct {
-	service port.OrderService
+	createOrder order.CreateOrder
+	listOrder   order.ListOrders
 }
 
-func NewOrderHandler(service port.OrderService) *OrderHandler {
+func NewOrderHandler(service order.CreateOrder, listOrders order.ListOrders) *OrderHandler {
 	return &OrderHandler{
 		service,
+		listOrders,
 	}
 }
 
@@ -41,7 +43,7 @@ type createOrderRequest struct {
 //	@Failure		500					{object}	errorResponse		"Erro interno"
 //	@Router			/orders [post]
 //	@Security		BearerAuth
-func (handler *OrderHandler) CreateOrder(ctx *gin.Context) {
+func (h *OrderHandler) CreateOrder(ctx *gin.Context) {
 	var request createOrderRequest
 	var products []domain.CreateOrderProduct
 	if err := ctx.ShouldBindJSON(&request); err != nil {
@@ -59,12 +61,12 @@ func (handler *OrderHandler) CreateOrder(ctx *gin.Context) {
 		ClientId: request.ClientId,
 		Products: products,
 	}
-	order, err := handler.service.CreateOrder(ctx, &oderInfo)
+	o, err := h.createOrder.Execute(ctx, &oderInfo)
 	if err != nil {
 		handleError(ctx, err)
 		return
 	}
-	response := newOrderResponse(order)
+	response := order2.NewOrderResponse(o)
 	handleSuccess(ctx, response)
 }
 
@@ -84,17 +86,17 @@ type listOrdersRequest struct {
 //	@Failure		400			{object}	errorResponse	"Erro de validação"
 //	@Failure		500			{object}	errorResponse	"Erro interno"
 //	@Router			/orders [get]
-func (handler *OrderHandler) ListOrders(ctx *gin.Context) {
+func (h *OrderHandler) ListOrders(ctx *gin.Context) {
 	var request listOrdersRequest
 	if err := ctx.ShouldBindQuery(&request); err != nil {
 		validationError(ctx, err)
 		return
 	}
-	listOrders, err := handler.service.ListOrders(ctx, request.Limit)
+	listOrders, err := h.listOrder.Execute(ctx, request.Limit)
 	if err != nil {
 		handleError(ctx, err)
 		return
 	}
-	response := newListOrdersResponse(listOrders)
+	response := order2.NewListOrdersResponse(listOrders)
 	handleSuccess(ctx, response)
 }

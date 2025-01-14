@@ -2,13 +2,10 @@ package handler
 
 import (
 	"errors"
-	"net/http"
-	"post-tech-challenge-10soat/internal/core/domain"
-	"time"
-
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/google/uuid"
+	"net/http"
+	"post-tech-challenge-10soat/internal/application/core/domain"
 )
 
 var errorStatusMap = map[error]int{
@@ -77,112 +74,5 @@ func newErrorResponse(errMsgs []string) errorResponse {
 	return errorResponse{
 		Success:  false,
 		Messages: errMsgs,
-	}
-}
-
-type clientResponse struct {
-	ID    uuid.UUID `json:"id" example:"ed6ac028-8016-4cbd-aeee-c3a155cdb2a4"`
-	Name  string    `json:"name" example:"John Doe"`
-	Email string    `json:"email" example:"john-doe@email.com"`
-}
-
-func newClientReponse(client *domain.Client) clientResponse {
-	return clientResponse{
-		ID:    client.Id,
-		Name:  client.Name,
-		Email: client.Email,
-	}
-}
-
-type categoryResponse struct {
-	ID   uuid.UUID `json:"id" example:"ed6ac028-8016-4cbd-aeee-c3a155cdb2a4"`
-	Name string    `json:"name" example:"Lanche"`
-}
-
-func newCategoryResponse(category *domain.Category) categoryResponse {
-	return categoryResponse{
-		ID:   category.Id,
-		Name: category.Name,
-	}
-}
-
-type productResponse struct {
-	ID          uuid.UUID        `json:"id" example:"ed6ac028-8016-4cbd-aeee-c3a155cdb2a4"`
-	Name        string           `json:"name" example:"Lanche 1"`
-	Description string           `json:"description" example:"Lanche com bacon"`
-	Image       string           `json:"image" example:"https://"`
-	Value       float64          `json:"value" example:"10.90"`
-	Category    categoryResponse `json:"category"`
-	CreatedAt   time.Time        `json:"created_at" example:"1970-01-01T00:00:00Z"`
-	UpdatedAt   time.Time        `json:"updated_at" example:"1970-01-01T00:00:00Z"`
-}
-
-func newProductResponse(product *domain.Product) productResponse {
-	return productResponse{
-		ID:          product.Id,
-		Name:        product.Name,
-		Description: product.Description,
-		Image:       product.Image,
-		Value:       product.Value,
-		Category:    newCategoryResponse(product.Category),
-		CreatedAt:   product.CreatedAt,
-		UpdatedAt:   product.UpdatedAt,
-	}
-}
-
-type orderResponse struct {
-	Id        uuid.UUID          `json:"id" example:"ed6ac028-8016-4cbd-aeee-c3a155cdb2a4"`
-	Number    int                `json:"number" example:"123"`
-	ClientId  uuid.UUID          `json:"client_id" example:"ed6ac028-8016-4cbd-aeee-c3a155cdb2a4"`
-	Total     float64            `json:"total" example:"100.90"`
-	Status    domain.OrderStatus `json:"status" example:"received"`
-	CreatedAt time.Time          `json:"created_at" example:"1970-01-01T00:00:00Z"`
-	UpdatedAt time.Time          `json:"updated_at" example:"1970-01-01T00:00:00Z"`
-}
-
-func newOrderResponse(order *domain.Order) orderResponse {
-	orderResponse := orderResponse{
-		Id:        order.Id,
-		Number:    order.Number,
-		Total:     order.Total,
-		Status:    order.Status,
-		CreatedAt: order.CreatedAt,
-		UpdatedAt: order.UpdatedAt,
-	}
-	if order.ClientId != nil {
-		orderResponse.ClientId = *order.ClientId
-	}
-	return orderResponse
-}
-
-type listOrdersResponse struct {
-	ReceivedOrders  []orderResponse `json:"received_orders"`
-	PreparingOrders []orderResponse `json:"preparing_orders"`
-	ReadyOrders     []orderResponse `json:"ready_orders"`
-	CompletedOrders []orderResponse `json:"completed_orders"`
-}
-
-func newListOrdersResponse(listOrders *domain.ListOrders) listOrdersResponse {
-	var receivedOrdersResponse []orderResponse
-	var preparingOrdersResponse []orderResponse
-	var readyOrdersResponse []orderResponse
-	var completedOrdersResponse []orderResponse
-	for _, order := range listOrders.ReceivedOrders {
-		receivedOrdersResponse = append(receivedOrdersResponse, newOrderResponse(&order))
-	}
-	for _, order := range listOrders.PreparingOrders {
-		preparingOrdersResponse = append(preparingOrdersResponse, newOrderResponse(&order))
-	}
-	for _, order := range listOrders.ReadyOrders {
-		readyOrdersResponse = append(readyOrdersResponse, newOrderResponse(&order))
-	}
-	for _, order := range listOrders.CompletedOrders {
-		completedOrdersResponse = append(completedOrdersResponse, newOrderResponse(&order))
-	}
-	return listOrdersResponse{
-		ReceivedOrders:  receivedOrdersResponse,
-		PreparingOrders: preparingOrdersResponse,
-		ReadyOrders:     readyOrdersResponse,
-		CompletedOrders: completedOrdersResponse,
 	}
 }

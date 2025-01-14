@@ -1,19 +1,21 @@
 package handler
 
 import (
-	"post-tech-challenge-10soat/internal/core/domain"
-	"post-tech-challenge-10soat/internal/core/port"
-
 	"github.com/gin-gonic/gin"
+	"post-tech-challenge-10soat/internal/application/core/domain"
+	client2 "post-tech-challenge-10soat/internal/application/core/usecases/client"
+	_ "post-tech-challenge-10soat/internal/core/ports"
 )
 
 type ClientHandler struct {
-	service port.ClientService
+	createClientUsecase client2.CreateClientUseCase
+	getClientUsecase    client2.GetClientUseCase
 }
 
-func NewClientHandler(service port.ClientService) *ClientHandler {
+func NewClientHandler(createClientUsecase client2.CreateClientUseCase, getClientUsecase client2.GetClientUseCase) *ClientHandler {
 	return &ClientHandler{
-		service,
+		createClientUsecase: createClientUsecase,
+		getClientUsecase:    getClientUsecase,
 	}
 }
 
@@ -33,22 +35,22 @@ type createClientRequest struct {
 //	@Success		200	{object} clientResponse	"Cliente registrado"
 //	@Failure		400	{object} errorResponse	"Erro de validação"
 //	@Router		/clients [post]
-func (handler *ClientHandler) CreateClient(ctx *gin.Context) {
+func (h *ClientHandler) CreateClient(ctx *gin.Context) {
 	var request createClientRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		validationError(ctx, err)
 		return
 	}
-	client := domain.Client{
+	c := domain.Client{
 		Name:  request.Name,
 		Email: request.Email,
 	}
-	_, err := handler.service.CreateClient(ctx, &client)
+	_, err := h.createClientUsecase.Execute(ctx, &c)
 	if err != nil {
 		handleError(ctx, err)
 		return
 	}
-	response := newClientReponse(&client)
+	response := newClientReponse(&c)
 	handleSuccess(ctx, response)
 }
 
@@ -68,17 +70,17 @@ type getClientByCpfRequest struct {
 //	    @Failure		400	{object}    errorResponse	"Erro de validação"
 //		   @Failure		404	{object}	errorResponse   "Cliente nao encontrado"
 //	    @Router		/clients/{cpf} [get]
-func (handler *ClientHandler) GetClientByCpf(ctx *gin.Context) {
+func (h *ClientHandler) GetClientByCpf(ctx *gin.Context) {
 	var request getClientByCpfRequest
 	if err := ctx.ShouldBindUri(&request); err != nil {
 		validationError(ctx, err)
 		return
 	}
-	client, err := handler.service.GetClientByCpf(ctx, request.Cpf)
+	c, err := h.getClientUsecase.Execute(ctx, request.Cpf)
 	if err != nil {
 		handleError(ctx, err)
 		return
 	}
-	response := newClientReponse(client)
+	response := newClientReponse(c)
 	handleSuccess(ctx, response)
 }
