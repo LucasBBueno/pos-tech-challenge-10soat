@@ -37,7 +37,7 @@ func NewRouter(
 	router.Use(sloggin.New(slog.Default()), gin.Recovery(), cors.New(ginConfig))
 
 	router.GET("/swagger.json", func(c *gin.Context) {
-		c.File("../../docs/swagger.json")
+		c.File("/usr/src/app/docs/swagger.json")
 	})
 
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.URL("/swagger.json")))

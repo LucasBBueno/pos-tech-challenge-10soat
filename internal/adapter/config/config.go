@@ -2,8 +2,8 @@ package config
 
 import (
 	"os"
-
-	"github.com/joho/godotenv"
+	
+	"fmt"
 )
 
 type (
@@ -36,12 +36,12 @@ type (
 )
 
 func New() (*Container, error) {
-	if os.Getenv("APP_ENV") != "production" {
-		err := godotenv.Load("../../.env")
-		if err != nil {
-			return nil, err
-		}
+	// Removido o carregamento do arquivo .env
+	// Apenas verifica se as variáveis de ambiente estão definidas
+	if os.Getenv("APP_ENV") == "" {
+		return nil, fmt.Errorf("APP_ENV is not set")
 	}
+
 	app := &App{
 		Name: os.Getenv("APP_NAME"),
 		Env:  os.Getenv("APP_ENV"),
