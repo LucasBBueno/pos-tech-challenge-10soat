@@ -15,7 +15,7 @@ type GetCategoryUsecase struct {
 	repository ports.CategoryRepository
 }
 
-func NewGetCategoryUsecase(repository ports.CategoryRepository) *GetCategoryUsecase {
+func NewGetCategoryUsecase(repository ports.CategoryRepository) GetCategory {
 	return &GetCategoryUsecase{
 		repository,
 	}

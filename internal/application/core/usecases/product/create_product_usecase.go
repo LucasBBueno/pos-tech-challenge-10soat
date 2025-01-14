@@ -3,26 +3,30 @@ package product
 import (
 	"context"
 	"fmt"
-	domain2 "post-tech-challenge-10soat/internal/application/core/domain"
+	"post-tech-challenge-10soat/internal/application/core/domain"
 	"post-tech-challenge-10soat/internal/application/ports"
 )
+
+type CreateProduct interface {
+	Execute(ctx context.Context, product *domain.Product) (*domain.Product, error)
+}
 
 type CreateProductUsecase struct {
 	productRepository  ports.ProductRepository
 	categoryRepository ports.CategoryRepository
 }
 
-func NewCreateProductUsecase(productRepository ports.ProductRepository, categoryRepository ports.CategoryRepository) *CreateProductUsecase {
+func NewCreateProductUsecase(productRepository ports.ProductRepository, categoryRepository ports.CategoryRepository) CreateProduct {
 	return &CreateProductUsecase{
 		productRepository,
 		categoryRepository,
 	}
 }
 
-func (s *CreateProductUsecase) Execute(ctx context.Context, product *domain2.Product) (*domain2.Product, error) {
+func (s *CreateProductUsecase) Execute(ctx context.Context, product *domain.Product) (*domain.Product, error) {
 	category, err := s.categoryRepository.GetCategoryById(ctx, product.CategoryId)
 	if err != nil {
-		if err == domain2.ErrDataNotFound {
+		if err == domain.ErrDataNotFound {
 			return nil, err
 		}
 		return nil, fmt.Errorf("cannot create product for this category - %s", err.Error())
@@ -30,10 +34,10 @@ func (s *CreateProductUsecase) Execute(ctx context.Context, product *domain2.Pro
 	product.Category = category
 	product, err = s.productRepository.CreateProduct(ctx, product)
 	if err != nil {
-		if err == domain2.ErrConflictingData {
+		if err == domain.ErrConflictingData {
 			return nil, err
 		}
-		return nil, domain2.ErrInternal
+		return nil, domain.ErrInternal
 	}
 	return product, nil
 }

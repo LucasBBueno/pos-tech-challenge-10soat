@@ -14,14 +14,14 @@ type ListOrdersUseCase struct {
 	orderRepository ports.OrderRepository
 }
 
-func CreateNewListOrdersUsecase(orderRepository ports.OrderRepository) *ListOrdersUseCase {
+func NewListOrdersUsecase(orderRepository ports.OrderRepository) ListOrders {
 	return &ListOrdersUseCase{
 		orderRepository,
 	}
 }
 
-func (s *ListOrdersUseCase) Execute(ctx context.Context, limit uint64) (*domain.ListOrders, error) {
-	orders, err := s.orderRepository.ListOrders(ctx, limit)
+func (l *ListOrdersUseCase) Execute(ctx context.Context, limit uint64) (*domain.ListOrders, error) {
+	orders, err := l.orderRepository.ListOrders(ctx, limit)
 	if err != nil {
 		return nil, err
 	}

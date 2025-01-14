@@ -6,11 +6,11 @@ import (
 	"log/slog"
 	"os"
 	"post-tech-challenge-10soat/internal/adapters/repository"
-	"post-tech-challenge-10soat/internal/core/usecases/client"
-	"post-tech-challenge-10soat/internal/core/usecases/order"
-	"post-tech-challenge-10soat/internal/core/usecases/payment"
-	"post-tech-challenge-10soat/internal/core/usecases/product"
-	"post-tech-challenge-10soat/internal/handler"
+	c "post-tech-challenge-10soat/internal/application/core/usecases/client"
+	"post-tech-challenge-10soat/internal/application/core/usecases/order"
+	"post-tech-challenge-10soat/internal/application/core/usecases/payment"
+	p "post-tech-challenge-10soat/internal/application/core/usecases/product"
+	h "post-tech-challenge-10soat/internal/handler"
 	"post-tech-challenge-10soat/internal/infra/config"
 	"post-tech-challenge-10soat/internal/infra/logger"
 	"post-tech-challenge-10soat/internal/infra/storage/postgres"
@@ -38,22 +38,22 @@ import (
 // @externalDocs.description	OpenAPI
 // @externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
-	config, err := config.New()
+	conf, err := config.New()
 	if err != nil {
 		slog.Error("Error loading environment variables", "error", err)
 		os.Exit(1)
 	}
-	logger.Set(config.App)
-	slog.Info("Starting the application", "app", config.App.Name, "env", config.App.Env)
+	logger.Set(conf.App)
+	slog.Info("Starting the application", "app", conf.App.Name, "env", conf.App.Env)
 
 	ctx := context.Background()
-	db, err := postgres.New(ctx, config.DB)
+	db, err := postgres.New(ctx, conf.DB)
 	if err != nil {
 		slog.Error("Error initializing database connection", "error", err)
 		os.Exit(1)
 	}
 
-	slog.Info("Successfully connected to the database", "db", config.DB.Connection)
+	slog.Info("Successfully connected to the database", "db", conf.DB.Connection)
 
 	err = db.Migrate()
 	if err != nil {
@@ -63,42 +63,39 @@ func main() {
 
 	defer db.Close()
 
-	healthHandler := handler.NewHealthHandler()
+	// adds health handler
+	healthHandler := h.NewHealthHandler()
 
-	clientRepository := repository.NewClientRepository(db)
-	clientService := client.NewClientService(clientRepository)
-	clientHandler := handler.NewClientHandler(clientService)
+	// adds client handler
+	cr := repository.NewClientRepository(db)
+	ch := h.NewClientHandler(c.NewCreateClientUsecase(cr), c.NewGetClientUseCase(cr))
 
-	productRepository := repository.NewProductRepository(db)
-	categoryRepository := repository.NewCategoryRepository(db)
-	productService := product.NewProductService(productRepository, categoryRepository)
-	productHandler := handler.NewProductHandler(productService)
+	// adds product handler
+	pr := repository.NewProductRepository(db)
+	ctr := repository.NewCategoryRepository(db)
 
-	orderRepository := repository.NewOrderRepository(db)
-	orderProductRepository := repository.NewOrderProductRepository(db)
-	paymentRepository := repository.NewPaymentRepository(db)
-	paymentService := payment.NewPaymentService(paymentRepository)
-	orderService := order.NewOrderService(
-		productRepository,
-		clientRepository,
-		orderRepository,
-		orderProductRepository,
-		paymentService)
-	orderHandler := handler.NewOrderHandler(orderService)
-
-	router, err := handler.NewRouter(
-		config.HTTP,
-		*healthHandler,
-		*clientHandler,
-		*productHandler,
-		*orderHandler,
+	ph := h.NewProductHandler(
+		p.NewCreateProductUsecase(pr, ctr),
+		p.NewDeleteProductUsecase(pr),
+		p.NewListProductsUsecase(pr, ctr),
+		p.NewUpdateProductUsecase(pr, ctr),
 	)
+
+	// adds order handler
+	or := repository.NewOrderRepository(db)
+	opr := repository.NewOrderProductRepository(db)
+
+	puc := payment.NewPaymentCheckoutUsecase(repository.NewPaymentRepository(db))
+
+	oh := h.NewOrderHandler(order.NewCreateOrderUsecase(pr, cr, or, opr, puc), order.NewListOrdersUsecase(or))
+
+	router, err := h.NewRouter(conf.HTTP, *healthHandler, *ch, *ph, *oh)
 	if err != nil {
 		slog.Error("Error initializing router", "error", err)
 		os.Exit(1)
 	}
 
-	listenAddress := fmt.Sprintf("%s:%s", config.HTTP.URL, config.HTTP.Port)
+	listenAddress := fmt.Sprintf("%s:%s", conf.HTTP.URL, conf.HTTP.Port)
 	slog.Info("Starting the HTTP server", "listen_address", listenAddress)
 	err = router.Run(listenAddress)
 	if err != nil {

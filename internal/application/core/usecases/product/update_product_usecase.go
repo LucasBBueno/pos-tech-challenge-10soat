@@ -8,12 +8,16 @@ import (
 	"post-tech-challenge-10soat/internal/application/ports"
 )
 
+type UpdateProduct interface {
+	Execute(ctx context.Context, product *domain2.Product) (*domain2.Product, error)
+}
+
 type UpdateProductUsecase struct {
 	productRepository  ports.ProductRepository
 	categoryRepository ports.CategoryRepository
 }
 
-func NewUpdateProductUsecase(productRepository ports.ProductRepository, categoryRepository ports.CategoryRepository) *UpdateProductUsecase {
+func NewUpdateProductUsecase(productRepository ports.ProductRepository, categoryRepository ports.CategoryRepository) UpdateProduct {
 	return &UpdateProductUsecase{
 		productRepository,
 		categoryRepository,

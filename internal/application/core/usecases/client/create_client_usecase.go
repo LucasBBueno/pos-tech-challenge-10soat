@@ -7,11 +7,15 @@ import (
 	"post-tech-challenge-10soat/internal/application/ports"
 )
 
+type CreateClient interface {
+	Execute(ctx context.Context, client *domain.Client) (*domain.Client, error)
+}
+
 type CreateClientUseCase struct {
 	repository ports.ClientRepository
 }
 
-func NewCreateClientUsecase(repository ports.ClientRepository) *CreateClientUseCase {
+func NewCreateClientUsecase(repository ports.ClientRepository) CreateClient {
 	return &CreateClientUseCase{
 		repository,
 	}

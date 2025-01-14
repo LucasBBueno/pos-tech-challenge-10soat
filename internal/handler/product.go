@@ -2,20 +2,31 @@ package handler
 
 import (
 	"fmt"
-	"post-tech-challenge-10soat/internal/application/core/domain"
-	"post-tech-challenge-10soat/internal/core/ports"
-
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	product2 "post-tech-challenge-10soat/internal/adapters/mappers/product"
+	"post-tech-challenge-10soat/internal/application/core/domain"
+	"post-tech-challenge-10soat/internal/application/core/usecases/product"
 )
 
 type ProductHandler struct {
-	service ports.ProductService
+	createProductUsecase product.CreateProduct
+	deleteProductUsecase product.DeleteProduct
+	listProductsUsecase  product.ListProducts
+	updateProductUsecase product.UpdateProduct
 }
 
-func NewProductHandler(service ports.ProductService) *ProductHandler {
+func NewProductHandler(
+	createProductUsecase product.CreateProduct,
+	deleteProductUsecase product.DeleteProduct,
+	listProductsUsecase product.ListProducts,
+	updateProductUsecase product.UpdateProduct,
+) *ProductHandler {
 	return &ProductHandler{
-		service,
+		createProductUsecase,
+		deleteProductUsecase,
+		listProductsUsecase,
+		updateProductUsecase,
 	}
 }
 
@@ -35,21 +46,21 @@ type listProductsRequest struct {
 //	@Failure		400			{object}	errorResponse	"Erro de validação"
 //	@Failure		500			{object}	errorResponse	"Erro interno"
 //	@Router			/products [get]
-func (handler *ProductHandler) ListProducts(ctx *gin.Context) {
+func (h *ProductHandler) ListProducts(ctx *gin.Context) {
 	var request listProductsRequest
-	var productsList []productResponse
+	var productsList []product2.ProductResponse
 	if err := ctx.ShouldBindQuery(&request); err != nil {
 		validationError(ctx, err)
 		return
 	}
-	products, err := handler.service.ListProducts(ctx, request.CategoryID)
+	products, err := h.listProductsUsecase.Execute(ctx, request.CategoryID)
 	if err != nil {
 		handleError(ctx, err)
 		return
 	}
 
-	for _, product := range products {
-		productsList = append(productsList, newProductResponse(&product))
+	for _, p := range products {
+		productsList = append(productsList, *product2.NewProductResponse(&p))
 	}
 	handleSuccess(ctx, productsList)
 }
@@ -73,7 +84,7 @@ type createProductRequest struct {
 //	@Success		200	{object} productResponse	"Produto registrado"
 //	@Failure		400	{object} errorResponse	"Erro de validação"
 //	@Router		/products [post]
-func (handler *ProductHandler) CreateProduct(ctx *gin.Context) {
+func (h *ProductHandler) CreateProduct(ctx *gin.Context) {
 	var request createProductRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		validationError(ctx, err)
@@ -84,20 +95,19 @@ func (handler *ProductHandler) CreateProduct(ctx *gin.Context) {
 		handleError(ctx, fmt.Errorf("invalid category id"))
 		return
 	}
-	product := domain.Product{
+	p := domain.Product{
 		Name:        request.Name,
 		Description: request.Description,
 		Image:       request.Image,
 		Value:       request.Value,
-		CategoryId:  categoryId,
+		CategoryId:  categoryId.String(),
 	}
-	_, err = handler.service.CreateProduct(ctx, &product)
+	_, err = h.createProductUsecase.Execute(ctx, &p)
 	if err != nil {
 		handleError(ctx, err)
 		return
 	}
-	response := newProductResponse(&product)
-	handleSuccess(ctx, response)
+	handleSuccess(ctx, product2.NewProductResponse(&p))
 }
 
 type updateProductRequest struct {
@@ -121,7 +131,7 @@ type updateProductRequest struct {
 //	@Failure		404						{object}	errorResponse			"Produto nao encontrado"
 //	@Failure		400	{object} errorResponse	"Erro de validação"
 //	@Router		/products/{id} [put]
-func (handler *ProductHandler) UpdateProduct(ctx *gin.Context) {
+func (h *ProductHandler) UpdateProduct(ctx *gin.Context) {
 	var request updateProductRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		validationError(ctx, err)
@@ -137,21 +147,20 @@ func (handler *ProductHandler) UpdateProduct(ctx *gin.Context) {
 		handleError(ctx, fmt.Errorf("invalid product id"))
 		return
 	}
-	product := domain.Product{
-		Id:          productId,
+	p := domain.Product{
+		Id:          productId.String(),
 		Name:        request.Name,
 		Description: request.Description,
 		Image:       request.Image,
 		Value:       request.Value,
-		CategoryId:  categoryId,
+		CategoryId:  categoryId.String(),
 	}
-	_, err = handler.service.UpdateProduct(ctx, &product)
+	_, err = h.updateProductUsecase.Execute(ctx, &p)
 	if err != nil {
 		handleError(ctx, err)
 		return
 	}
-	response := newProductResponse(&product)
-	handleSuccess(ctx, response)
+	handleSuccess(ctx, product2.NewProductResponse(&p))
 }
 
 type deleteProductRequest struct {
@@ -170,13 +179,13 @@ type deleteProductRequest struct {
 //	@Failure		404						{object}	errorResponse			"Produto nao encontrado"
 //	@Failure		400	{object} errorResponse	"Erro de validação"
 //	@Router		/products/{id} [delete]
-func (handler *ProductHandler) DeleteProduct(ctx *gin.Context) {
+func (h *ProductHandler) DeleteProduct(ctx *gin.Context) {
 	var request deleteProductRequest
 	if err := ctx.ShouldBindUri(&request); err != nil {
 		validationError(ctx, err)
 		return
 	}
-	err := handler.service.DeleteProduct(ctx, request.Id)
+	err := h.deleteProductUsecase.Execute(ctx, request.Id)
 	if err != nil {
 		handleError(ctx, err)
 		return

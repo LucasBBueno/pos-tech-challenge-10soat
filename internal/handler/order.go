@@ -12,9 +12,9 @@ type OrderHandler struct {
 	listOrder   order.ListOrders
 }
 
-func NewOrderHandler(service order.CreateOrder, listOrders order.ListOrders) *OrderHandler {
+func NewOrderHandler(createOrder order.CreateOrder, listOrders order.ListOrders) *OrderHandler {
 	return &OrderHandler{
-		service,
+		createOrder,
 		listOrders,
 	}
 }

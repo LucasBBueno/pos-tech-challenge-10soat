@@ -2,17 +2,17 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
+	cm "post-tech-challenge-10soat/internal/adapters/mappers/client"
 	"post-tech-challenge-10soat/internal/application/core/domain"
-	client2 "post-tech-challenge-10soat/internal/application/core/usecases/client"
-	_ "post-tech-challenge-10soat/internal/core/ports"
+	"post-tech-challenge-10soat/internal/application/core/usecases/client"
 )
 
 type ClientHandler struct {
-	createClientUsecase client2.CreateClientUseCase
-	getClientUsecase    client2.GetClientUseCase
+	createClientUsecase client.CreateClient
+	getClientUsecase    client.GetClient
 }
 
-func NewClientHandler(createClientUsecase client2.CreateClientUseCase, getClientUsecase client2.GetClientUseCase) *ClientHandler {
+func NewClientHandler(createClientUsecase client.CreateClient, getClientUsecase client.GetClient) *ClientHandler {
 	return &ClientHandler{
 		createClientUsecase: createClientUsecase,
 		getClientUsecase:    getClientUsecase,
@@ -50,7 +50,7 @@ func (h *ClientHandler) CreateClient(ctx *gin.Context) {
 		handleError(ctx, err)
 		return
 	}
-	response := newClientReponse(&c)
+	response := cm.NewClientResponse(&c)
 	handleSuccess(ctx, response)
 }
 
@@ -81,6 +81,6 @@ func (h *ClientHandler) GetClientByCpf(ctx *gin.Context) {
 		handleError(ctx, err)
 		return
 	}
-	response := newClientReponse(c)
+	response := cm.NewClientResponse(c)
 	handleSuccess(ctx, response)
 }

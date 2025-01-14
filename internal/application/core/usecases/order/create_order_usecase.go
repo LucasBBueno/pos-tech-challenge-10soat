@@ -21,7 +21,12 @@ type CreateOrderUsecase struct {
 	paymentCheckout        payment.PaymentCheckout
 }
 
-func NewCreateOrderUsecase(productRepository ports.ProductRepository, clientRepository ports.ClientRepository, orderRepository ports.OrderRepository, orderProductRepository ports.OrderProductRepository, paymentCheckout payment.PaymentCheckout) *CreateOrderUsecase {
+func NewCreateOrderUsecase(
+	productRepository ports.ProductRepository,
+	clientRepository ports.ClientRepository,
+	orderRepository ports.OrderRepository,
+	orderProductRepository ports.OrderProductRepository,
+	paymentCheckout payment.PaymentCheckout) CreateOrder {
 	return &CreateOrderUsecase{
 		productRepository,
 		clientRepository,
@@ -100,7 +105,10 @@ func (s *CreateOrderUsecase) Execute(ctx context.Context, createOrder *domain2.C
 			if err == domain2.ErrDataNotFound {
 				return nil, err
 			}
-			s.orderRepository.DeleteOrder(ctx, order.Id)
+			err := s.orderRepository.DeleteOrder(ctx, order.Id)
+			if err != nil {
+				return nil, err
+			}
 			return nil, fmt.Errorf("cannot complete order - %s", err.Error())
 		}
 	}

@@ -6,12 +6,16 @@ import (
 	"post-tech-challenge-10soat/internal/application/ports"
 )
 
+type ListProducts interface {
+	Execute(ctx context.Context, categoryId string) ([]domain2.Product, error)
+}
+
 type ListProductsUsecase struct {
 	productRepository  ports.ProductRepository
 	categoryRepository ports.CategoryRepository
 }
 
-func NewListProductsUsecase(productRepository ports.ProductRepository, categoryRepository ports.CategoryRepository) *ListProductsUsecase {
+func NewListProductsUsecase(productRepository ports.ProductRepository, categoryRepository ports.CategoryRepository) ListProducts {
 	return &ListProductsUsecase{
 		productRepository,
 		categoryRepository,

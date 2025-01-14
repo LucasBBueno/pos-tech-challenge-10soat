@@ -8,11 +8,15 @@ import (
 	"post-tech-challenge-10soat/internal/application/ports"
 )
 
+type DeleteProduct interface {
+	Execute(ctx context.Context, id string) error
+}
+
 type DeleteProductUsecase struct {
 	productRepository ports.ProductRepository
 }
 
-func NewDeleteProductUsecase(productRepository ports.ProductRepository, categoryRepository ports.CategoryRepository) *DeleteProductUsecase {
+func NewDeleteProductUsecase(productRepository ports.ProductRepository) DeleteProduct {
 	return &DeleteProductUsecase{
 		productRepository,
 	}
