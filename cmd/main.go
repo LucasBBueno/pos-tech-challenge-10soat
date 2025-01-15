@@ -84,9 +84,7 @@ func main() {
 	// adds order handler
 	or := repository.NewOrderRepository(db)
 	opr := repository.NewOrderProductRepository(db)
-
 	puc := payment.NewPaymentCheckoutUsecase(repository.NewPaymentRepository(db))
-
 	oh := h.NewOrderHandler(order.NewCreateOrderUsecase(pr, cr, or, opr, puc), order.NewListOrdersUsecase(or))
 
 	router, err := h.NewRouter(conf.HTTP, *healthHandler, *ch, *ph, *oh)

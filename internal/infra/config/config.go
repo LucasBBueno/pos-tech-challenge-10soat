@@ -2,7 +2,7 @@ package config
 
 import (
 	"os"
-	
+
 	"fmt"
 )
 
@@ -36,12 +36,9 @@ type (
 )
 
 func New() (*Container, error) {
-	// Removido o carregamento do arquivo .env
-	// Apenas verifica se as variáveis de ambiente estão definidas
 	if os.Getenv("APP_ENV") == "" {
 		return nil, fmt.Errorf("APP_ENV is not set")
 	}
-
 	app := &App{
 		Name: os.Getenv("APP_NAME"),
 		Env:  os.Getenv("APP_ENV"),
@@ -60,7 +57,6 @@ func New() (*Container, error) {
 		Password:   os.Getenv("DB_PASSWORD"),
 		Name:       os.Getenv("DB_NAME"),
 	}
-
 	return &Container{
 		app,
 		http,
