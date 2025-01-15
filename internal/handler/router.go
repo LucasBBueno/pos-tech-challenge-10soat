@@ -2,6 +2,8 @@ package handler
 
 import (
 	"log/slog"
+	"os"
+	"path/filepath"
 	"post-tech-challenge-10soat/internal/infra/config"
 	"strings"
 
@@ -35,8 +37,13 @@ func NewRouter(
 	router := gin.New()
 	router.Use(sloggin.New(slog.Default()), gin.Recovery(), cors.New(ginConfig))
 
+	wd, err := os.Getwd()
+	if err != nil {
+		panic("fail to get actual directory")
+	}
+	swaggerPath := filepath.Join(wd, "docs", "swagger.json")
 	router.GET("/swagger.json", func(c *gin.Context) {
-		c.File("../../docs/swagger.json")
+		c.File(swaggerPath)
 	})
 
 	router.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.URL("/swagger.json")))
