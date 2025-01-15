@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"os"
 	"path/filepath"
+	"post-tech-challenge-10soat/internal/infra/config"
 	"strings"
 
 	"github.com/gin-contrib/cors"
@@ -12,8 +13,6 @@ import (
 
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-
-	"post-tech-challenge-10soat/internal/adapter/config"
 )
 
 type Router struct {
