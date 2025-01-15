@@ -2,7 +2,7 @@ package repository
 
 import (
 	"context"
-	domain2 "post-tech-challenge-10soat/internal/application/core/domain"
+	domain "post-tech-challenge-10soat/internal/application/core/domain"
 	"post-tech-challenge-10soat/internal/infra/storage/postgres"
 
 	sq "github.com/Masterminds/squirrel"
@@ -19,8 +19,8 @@ func NewCategoryRepository(db *postgres.DB) *CategoryRepository {
 	}
 }
 
-func (cr *CategoryRepository) GetCategoryById(ctx context.Context, id string) (*domain2.Category, error) {
-	var category domain2.Category
+func (cr *CategoryRepository) GetCategoryById(ctx context.Context, id string) (*domain.Category, error) {
+	var category domain.Category
 	query := cr.db.QueryBuilder.Select("*").
 		From("categories").
 		Where(sq.Eq{"id": id}).
@@ -38,7 +38,7 @@ func (cr *CategoryRepository) GetCategoryById(ctx context.Context, id string) (*
 	)
 	if err != nil {
 		if err == pgx.ErrNoRows {
-			return nil, domain2.ErrDataNotFound
+			return nil, domain.ErrDataNotFound
 		}
 		return nil, err
 	}
